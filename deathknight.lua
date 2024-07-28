@@ -155,7 +155,6 @@ function ConRO:Stats()
 
 	_Pet_summoned = ConRO:CallPet();
 
-	_AncestralCall, _AncestralCall_RDY = ConRO:AbilityReady(ids.Racial.AncestralCall, timeShift);
 	_ArcanePulse, _ArcanePulse_RDY = ConRO:AbilityReady(ids.Racial.ArcanePulse, timeShift);
 	_Berserking, _Berserking_RDY = ConRO:AbilityReady(ids.Racial.Berserking, timeShift);
 	_ArcaneTorrent, _ArcaneTorrent_RDY = ConRO:AbilityReady(ids.Racial.ArcaneTorrent, timeShift);
@@ -184,8 +183,6 @@ function ConRO.DeathKnight.Blood(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 		local _IcyTalons_BUFF, _, _IcyTalons_DUR = ConRO:Aura(Buff.IcyTalons, timeShift);
 	local _DeathsAdvance, _DeathsAdvance_RDY = ConRO:AbilityReady(Ability.DeathsAdvance, timeShift);
 	local _DeathsCaress, _DeathsCaress_RDY = ConRO:AbilityReady(Ability.DeathsCaress, timeShift);
-	local _EmpowerRuneWeapon, _EmpowerRuneWeapon_RDY = ConRO:AbilityReady(Ability.EmpowerRuneWeapon, timeShift);
-		local _EmpowerRuneWeapon_BUFF = ConRO:Aura(Buff.EmpowerRuneWeapon, timeShift);
 	local _HeartStrike, _HeartStrike_RDY = ConRO:AbilityReady(Ability.HeartStrike, timeShift);
 	local _MindFreeze, _MindFreeze_RDY = ConRO:AbilityReady(Ability.MindFreeze, timeShift);
 	local _Marrowrend, _Marrowrend_RDY = ConRO:AbilityReady(Ability.Marrowrend, timeShift);
@@ -213,7 +210,6 @@ function ConRO.DeathKnight.Blood(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 
 	ConRO:AbilityBurst(_AbominationLimb, _AbominationLimb_RDY and _in_combat and ConRO:BurstMode(_AbominationLimb, 120));
 	ConRO:AbilityBurst(_Bonestorm, _Bonestorm_RDY and _RunicPower >= 10 and _enemies_in_melee >= 3 and ConRO:BurstMode(_Bonestorm, 60));
-	ConRO:AbilityBurst(_EmpowerRuneWeapon, _EmpowerRuneWeapon_RDY and ConRO:BurstMode(_EmpowerRuneWeapon, 120));
 	ConRO:AbilityBurst(_RaiseDead, _RaiseDead_RDY and not _Pet_summoned  and ConRO:BurstMode(_RaiseDead, 120));
 
 --Rotations
@@ -285,11 +281,6 @@ function ConRO.DeathKnight.Blood(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 			if _AbominationLimb_RDY and ConRO:FullMode(_AbominationLimb) then
 				tinsert(ConRO.SuggestedSpells, _AbominationLimb);
 				_AbominationLimb_RDY = false;
-			end
-
-			if _EmpowerRuneWeapon_RDY and _Runes <= 3 and ConRO:FullMode(_EmpowerRuneWeapon) then
-				tinsert(ConRO.SuggestedSpells, _EmpowerRuneWeapon);
-				_EmpowerRuneWeapon_RDY = false;
 			end
 
 			if _RaiseDead_RDY and ConRO:FullMode(_RaiseDead) then
@@ -432,7 +423,11 @@ function ConRO.DeathKnight.BloodDef(_, timeShift, currentSpell, gcd, tChosen, pv
 		if _DeathStrike_RDY and _Player_Percent_Health <= 30 then
 			tinsert(ConRO.SuggestedDefSpells, _DeathStrike);
 		end
-
+		
+		if _Consumption_RDY_RDY and _Player_Percent_Health <= 50 and _Runes <= 2 and _RunicPower <= 40 then
+			tinsert(ConRO.SuggestedDefSpells, _DeathStrike);
+		end		
+		
 		if _DancingRuneWeapon_RDY then
 			tinsert(ConRO.SuggestedDefSpells, _DancingRuneWeapon);
 		end
@@ -461,8 +456,6 @@ function ConRO.DeathKnight.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 	local _DeathStrike, _DeathStrike_RDY = ConRO:AbilityReady(Ability.DeathStrike, timeShift);
 		local _DarkSuccor_BUFF = ConRO:Aura(Buff.DarkSuccor, timeShift);
 	local _DeathsAdvance, _DeathsAdvance_RDY = ConRO:AbilityReady(Ability.DeathsAdvance, timeShift);
-	local _EmpowerRuneWeapon, _EmpowerRuneWeapon_RDY = ConRO:AbilityReady(Ability.EmpowerRuneWeapon, timeShift);
-		local _EmpowerRuneWeapon_BUFF = ConRO:Aura(Buff.EmpowerRuneWeapon, timeShift);
 		local _UnholyStrength_BUFF, _, _UnholyStrength_DUR = ConRO:Aura(Buff.UnholyStrength, timeShift);
 		local _RazorIce_DEBUFF, _RazorIce_COUNT	= ConRO:TargetAura(Debuff.RazorIce, timeShift);
 	local _FrostStrike, _FrostStrike_RDY = ConRO:AbilityReady(Ability.FrostStrike, timeShift);
@@ -500,7 +493,6 @@ function ConRO.DeathKnight.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 
 	ConRO:AbilityBurst(_FrostwyrmsFury, _FrostwyrmsFury_RDY and _in_combat and _PillarofFrost_BUFF and _PillarofFrost_DUR <= 5);
 	ConRO:AbilityBurst(_BreathofSindragosa, _BreathofSindragosa_RDY and _Runes >= 3 and _RunicPower >= 60 and _PillarofFrost_RDY and ConRO:BurstMode(_BreathofSindragosa));
-	ConRO:AbilityBurst(_EmpowerRuneWeapon, _EmpowerRuneWeapon_RDY and _PillarofFrost_RDY and _Runes < 6 and not tChosen[Ability.BreathofSindragosa.talentID] and ConRO:BurstMode(_EmpowerRuneWeapon, 120));
 	ConRO:AbilityBurst(_HornofWinter, _HornofWinter_RDY and _Runes <= 4 and _RunicPower <= _RunicPower_Max - 25 and (not tChosen[Ability.Obliteration.talentID] and (not tChosen[Ability.BreathofSindragosa.talentID] or (tChosen[Ability.BreathofSindragosa.talentID] and _BreathofSindragosa_CD >= 40))) and ConRO:BurstMode(_HornofWinter));
 	ConRO:AbilityBurst(_PillarofFrost, _PillarofFrost_RDY and ((not tChosen[Ability.BreathofSindragosa.talentID] and _Runes <= 2) or (tChosen[Ability.BreathofSindragosa.talentID] and _BreathofSindragosa_CD >= 40)) and ConRO:BurstMode(_PillarofFrost));
 	ConRO:AbilityBurst(_RaiseDead, _RaiseDead_RDY and not _Pet_summoned and _PillarofFrost_RDY and ConRO:BurstMode(_RaiseDead));
@@ -796,8 +788,6 @@ function ConRO.DeathKnight.Unholy(_, timeShift, currentSpell, gcd, tChosen, pvpC
 	local _DeathStrike, _DeathStrike_RDY = ConRO:AbilityReady(Ability.DeathStrike, timeShift);
 		local _DarkSuccor_BUFF = ConRO:Aura(Buff.DarkSuccor, timeShift);
 	local _DeathsAdvance, _DeathsAdvance_RDY = ConRO:AbilityReady(Ability.DeathsAdvance, timeShift);
-	local _EmpowerRuneWeapon, _EmpowerRuneWeapon_RDY = ConRO:AbilityReady(Ability.EmpowerRuneWeapon, timeShift);
-		local _EmpowerRuneWeapon_BUFF = ConRO:Aura(Buff.EmpowerRuneWeapon, timeShift);
 	local _Epidemic, _Epidemic_RDY = ConRO:AbilityReady(Ability.Epidemic, timeShift);
 	local _FesteringStrike, _FesteringStrike_RDY = ConRO:AbilityReady(Ability.FesteringStrike, timeShift);
 		local _FesteringWound_DEBUFF, _FesteringWound_COUNT = ConRO:TargetAura(Debuff.FesteringWound, timeShift);
@@ -814,8 +804,6 @@ function ConRO.DeathKnight.Unholy(_, timeShift, currentSpell, gcd, tChosen, pvpC
 	local _SoulReaper, _SoulReaper_RDY = ConRO:AbilityReady(Ability.SoulReaper, timeShift);
 	local _SummonGargoyle, _SummonGargoyle_RDY, _SummonGargoyle_CD = ConRO:AbilityReady(Ability.SummonGargoyle, timeShift);
 	local _UnholyAssault, _UnholyAssault_RDY = ConRO:AbilityReady(Ability.UnholyAssault, timeShift);
-	local _UnholyBlight, _UnholyBlight_RDY, _UnholyBlight_CD, _UnholyBlight_MaxCD = ConRO:AbilityReady(Ability.UnholyBlight, timeShift);
-		local _UnholyBlight_DEBUFF = ConRO:TargetAura(Debuff.UnholyBlight, timeShift);
 	local _WraithWalk, _WraithWalk_RDY = ConRO:AbilityReady(Ability.WraithWalk, timeShift);
 
 	local _AbominationLimb, _AbominationLimb_RDY = ConRO:AbilityReady(Ability.AbominationLimb, timeShift);
@@ -839,7 +827,6 @@ function ConRO.DeathKnight.Unholy(_, timeShift, currentSpell, gcd, tChosen, pvpC
 	ConRO:AbilityBurst(_Apocalypse, _in_combat and _Apocalypse_RDY and _FesteringWound_COUNT >= 4 and ConRO:BurstMode(_Apocalypse));
 	ConRO:AbilityBurst(_UnholyAssault, _in_combat and _UnholyAssault_RDY and _FesteringWound_COUNT < 3 and ConRO:BurstMode(_UnholyAssault));
 	ConRO:AbilityBurst(_SummonGargoyle, _SummonGargoyle_RDY and _RunicPower >= 90 and _SuddenDoom_BUFF and ConRO:BurstMode(_SummonGargoyle));
-	ConRO:AbilityBurst(_UnholyBlight, _UnholyBlight_RDY and not (_VirulentPlague_DEBUFF and _UnholyBlight_DEBUFF) and ConRO:BurstMode(_UnholyBlight));
 
 	ConRO:AbilityBurst(_AbominationLimb, _AbominationLimb_RDY and ConRO:BurstMode(_AbominationLimb));
 
@@ -858,12 +845,6 @@ function ConRO.DeathKnight.Unholy(_, timeShift, currentSpell, gcd, tChosen, pvpC
 			if _FesteringStrike_RDY and _Runes >= 2 and (_FesteringWound_COUNT <= 0 or (_FesteringWound_COUNT <= 4 and (_Apocalypse_RDY or _Apocalypse_CD <= 10))) then
 				tinsert(ConRO.SuggestedSpells, _FesteringStrike);
 				_Runes = _Runes - 2;
-			end
-
-			if _UnholyBlight_RDY and (_DarkTransformation_RDY or _DarkTransformation_BUFF) and not (_VirulentPlague_DEBUFF and _UnholyBlight_DEBUFF) and ConRO:FullMode(_UnholyBlight) then
-				tinsert(ConRO.SuggestedSpells, _UnholyBlight);
-				_UnholyBlight_RDY = false;
-				_Runes = _Runes - 1;
 			end
 		end
 
@@ -907,11 +888,6 @@ function ConRO.DeathKnight.Unholy(_, timeShift, currentSpell, gcd, tChosen, pvpC
 		if _UnholyAssault_RDY and _FesteringWound_COUNT < 3 and _Apocalypse_CD <= _Apocalypse_MaxCD - 3 and _Apocalypse_CD >= _Apocalypse_MaxCD - 15 and ConRO:FullMode(_UnholyAssault) then
 			tinsert(ConRO.SuggestedSpells, _UnholyAssault);
 			_UnholyAssault_RDY = false;
-		end
-
-		if _EmpowerRuneWeapon_RDY and not _EmpowerRuneWeapon_BUFF and _Runes < 6 and ConRO:FullMode(_EmpowerRuneWeapon, 120) then
-			tinsert(ConRO.SuggestedSpells, _EmpowerRuneWeapon);
-			_EmpowerRuneWeapon_RDY = false;
 		end
 
 		if _AbominationLimb_RDY and ConRO:FullMode(_AbominationLimb) then
